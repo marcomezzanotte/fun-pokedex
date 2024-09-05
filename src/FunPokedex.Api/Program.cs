@@ -1,3 +1,5 @@
+using FunPokedex.Core.Interfaces;
+using FunPokedex.Core.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +12,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders().AddSimpleConsole(opt => opt.IncludeScopes = true);
 
 builder.Services.AddProblemDetails();
+
+// uri read and validated from configuration in real-world environments (allow to use non-production api destination in non-production application environments)
+builder.Services.AddPokeApiPokemonInfoReader(baseUri: new System.Uri("https://pokeapi.co/api/v2/"));
 
 bool enableSwagger = builder.Environment.IsDevelopment();   // avoid Swagger in production environments (keep application as slim as possible)
 if (enableSwagger)
@@ -26,9 +31,9 @@ if (enableSwagger)
     app.UseSwaggerUI();
 }
 
-app.MapGet("/sample", () =>
+app.MapGet("/sample", async (IPokemonInfoReader reader) =>
 {
-    return Results.Ok("ok");
+    return (await reader.GetPokemonByNameAsync("mewtwo")).Value;
 })
 .WithName("sample")
 .WithOpenApi();

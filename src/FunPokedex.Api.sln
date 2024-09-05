@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunPokedex.Api", "FunPokede
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunPokedex.Core", "FunPokedex.Core\FunPokedex.Core.csproj", "{0D4B9C08-7ADD-40FA-AB4D-1DCDFE02C2BF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunPokedex.Clients.PokeApi", "FunPokedex.Clients.PokeApi\FunPokedex.Clients.PokeApi.csproj", "{AE3BA310-B056-4886-BB27-11879F17697D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{0D4B9C08-7ADD-40FA-AB4D-1DCDFE02C2BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D4B9C08-7ADD-40FA-AB4D-1DCDFE02C2BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D4B9C08-7ADD-40FA-AB4D-1DCDFE02C2BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE3BA310-B056-4886-BB27-11879F17697D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE3BA310-B056-4886-BB27-11879F17697D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE3BA310-B056-4886-BB27-11879F17697D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE3BA310-B056-4886-BB27-11879F17697D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
