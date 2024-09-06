@@ -1,5 +1,4 @@
-﻿using System;
-using Vogen;
+﻿using Vogen;
 
 namespace FunPokedex.Core.Models;
 

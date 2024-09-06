@@ -1,5 +1,4 @@
-﻿using FluentResults;
-using FunPokedex.Core.Models;
+﻿using FunPokedex.Core.Models;
 using System.Threading.Tasks;
 
 namespace FunPokedex.Core.Interfaces;

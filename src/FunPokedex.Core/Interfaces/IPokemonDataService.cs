@@ -7,5 +7,6 @@ namespace FunPokedex.Core.Interfaces
     public interface IPokemonDataService
     {
         Task<Result<PokemonStandardInfoModel>> GetPokemonStandardInfoAsIsAsync(PokemonName name);
+        Task<Result<PokemonStandardInfoModel>> GetPokemonStandardInfoTransaltedAsync(PokemonName name);
     }
 }

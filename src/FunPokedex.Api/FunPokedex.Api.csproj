@@ -6,6 +6,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FunPokedex.Clients.FunTranslations\FunPokedex.Clients.FunTranslations.csproj" />
     <ProjectReference Include="..\FunPokedex.Clients.PokeApi\FunPokedex.Clients.PokeApi.csproj" />
   </ItemGroup>
 

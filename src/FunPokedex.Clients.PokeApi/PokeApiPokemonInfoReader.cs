@@ -1,6 +1,4 @@
-﻿using FluentResults;
-using FunPokedex.Core.Errors;
-using FunPokedex.Core.Interfaces;
+﻿using FunPokedex.Core.Interfaces;
 using FunPokedex.Core.Models;
 using Microsoft.Extensions.Logging;
 using System;
