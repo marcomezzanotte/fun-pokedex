@@ -5,6 +5,7 @@ using FunPokedex.Core.Models;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
@@ -30,6 +31,12 @@ internal sealed class PokeApiPokemonInfoReader : IPokemonInfoReader
         {
             using (var response = await _httpClient.GetAsync($"pokemon-species/{name.Value}"))
             {
+                // not found case handled separately because it is considered the most frequent "unsuccessfull case" and avoidi exception overhead could be a great benefit for performance
+                if (HttpStatusCode.NotFound.Equals(response.StatusCode))
+                {
+                    return Result.Fail(DomainErrors.UnknownPokemon);
+                }
+                
                 response.EnsureSuccessStatusCode();
                 var pokemonData = await response.Content.ReadFromJsonAsync<PokeApiPokemonData>();
                 var resolveDescription = pokemonData.FlavorTextEntries?.FirstOrDefault(x => PokeApiFlavorTextEntryLanguage.EnglishName.Equals(x.Language?.Name, StringComparison.InvariantCultureIgnoreCase)).FlavorText ?? string.Empty;

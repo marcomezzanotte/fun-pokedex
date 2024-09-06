@@ -1,7 +1,9 @@
+using FluentResults;
 using FunPokedex.Core.Interfaces;
 using FunPokedex.Core.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -31,11 +33,15 @@ if (enableSwagger)
     app.UseSwaggerUI();
 }
 
-app.MapGet("/sample", async (IPokemonInfoReader reader) =>
+app.MapGet("/pokemon/{pokemonName}", async (IPokemonInfoReader reader, string pokemonName) =>
 {
-    return (await reader.GetPokemonByNameAsync("mewtwo")).Value;
+    var lookupResult = await reader.GetPokemonByNameAsync(pokemonName);
+    return lookupResult switch
+    {
+        { IsSuccess: true } => Results.Json(lookupResult.Value),
+        _ => lookupResult.MapToApiResultsOnFailed()
+    };
 })
-.WithName("sample")
 .WithOpenApi();
 
 app.Run();

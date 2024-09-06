@@ -7,7 +7,7 @@ namespace FunPokedex.Core.Errors;
 /// </summary>
 public sealed class DomainErrorCode
 {
-    private static readonly Uri BaseTypeUri = new Uri("https://project-uri.com/errors/");
+    public static readonly Uri BaseTypeUri = new Uri("https://project-uri.com/errors/");
 
     public DomainErrorCode(string errorCodePath)
     {
