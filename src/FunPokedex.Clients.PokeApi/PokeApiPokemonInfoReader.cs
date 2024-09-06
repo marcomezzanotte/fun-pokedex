@@ -9,12 +9,14 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace FunPokedex.Clients.PokeApi;
 
 internal sealed class PokeApiPokemonInfoReader : IPokemonInfoReader
 {
+    private const string NonAsciiCharsRegexPattern = "[^\x00 -\x7F]";
     private readonly ILogger<PokeApiPokemonInfoReader> _logger;
     private readonly HttpClient _httpClient;
 
@@ -41,7 +43,8 @@ internal sealed class PokeApiPokemonInfoReader : IPokemonInfoReader
             response.EnsureSuccessStatusCode();
             var pokemonData = await response.Content.ReadFromJsonAsync<PokeApiPokemonData>();
             var resolveDescription = pokemonData.FlavorTextEntries?.FirstOrDefault(x => PokeApiFlavorTextEntryLanguage.EnglishName.Equals(x.Language?.Name, StringComparison.InvariantCultureIgnoreCase)).FlavorText ?? string.Empty;
-            return new PokemonStandardInfoModel(pokemonData.Name, Description: resolveDescription, pokemonData.Habitat.HasValue ? PokemonHabitat.From(pokemonData.Habitat!.Value!.Name!) : null, IsLegendary: pokemonData.IsLegendary);
+            string cleanedDescriptionToTranslate = Regex.Replace(resolveDescription, pattern: NonAsciiCharsRegexPattern, replacement: " ");      // remove non-ASCII chars
+            return new PokemonStandardInfoModel(pokemonData.Name, Description: cleanedDescriptionToTranslate, pokemonData.Habitat.HasValue ? PokemonHabitat.From(pokemonData.Habitat!.Value!.Name!) : null, IsLegendary: pokemonData.IsLegendary);
         }
     }
 
