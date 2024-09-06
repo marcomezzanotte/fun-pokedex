@@ -1,4 +1,5 @@
 using FluentResults;
+using FunPokedex.Api.Endpoints;
 using FunPokedex.Core.Extensions;
 using FunPokedex.Core.Interfaces;
 using Microsoft.AspNetCore.Builder;
@@ -28,26 +29,6 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.MapGet("/pokemon/{pokemonName}", async (IPokemonDataService pokemonDataService, string pokemonName) =>
-{
-    var serviceResult = await pokemonDataService.GetPokemonStandardInfoAsIsAsync(pokemonName);
-    return serviceResult switch
-    {
-        { IsSuccess: true } => Results.Json(serviceResult.Value),
-        _ => serviceResult.MapToApiResultsOnFailed()
-    };
-})
-.WithOpenApi();
-
-app.MapGet("/pokemon/translated/{pokemonName}", async (IPokemonDataService pokemonDataService, string pokemonName) =>
-{
-    var serviceResult = await pokemonDataService.GetPokemonStandardInfoTransaltedAsync(pokemonName);
-    return serviceResult switch
-    {
-        { IsSuccess: true } => Results.Json(serviceResult.Value),
-        _ => serviceResult.MapToApiResultsOnFailed()
-    };
-})
-.WithOpenApi();
+app.RegisterPokemonEndpoints();
 
 app.Run();
