@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace FunPokedex.Clients.PokeApi;
 
-internal sealed class PokeApiPokemonInfoReader : IPokemonInfoReader
+public sealed class PokeApiPokemonInfoReader : IPokemonInfoReader
 {
     private const string NonAsciiCharsRegexPattern = "[^\x00 -\x7F]";
     private readonly ILogger<PokeApiPokemonInfoReader> _logger;

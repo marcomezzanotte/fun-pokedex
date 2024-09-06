@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FunPokedex.Clients.FunTranslations
 {
-    internal sealed class FunTranslationTextTranslator : ITextTranslator
+    public sealed class FunTranslationTextTranslator : ITextTranslator
     {
         private const int SuccessfullResponseTotalValue = 1;
         public const string ShakespereanTranslatorPath = "shakespeare.json";
