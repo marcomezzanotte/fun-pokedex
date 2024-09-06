@@ -24,29 +24,24 @@ internal sealed class PokeApiPokemonInfoReader : IPokemonInfoReader
         _httpClient = httpClient;
     }
 
-    public async Task<Result<PokemonStandardInfoModel>> GetPokemonByNameAsync(PokemonName name)
+    public async Task<PokemonStandardInfoModel?> GetPokemonByNameOrDefaultAsync(PokemonName name)
     {
         ArgumentNullException.ThrowIfNull(name);
-        try
+        using (var response = await _httpClient.GetAsync($"pokemon-species/{name.Value}"))
         {
-            using (var response = await _httpClient.GetAsync($"pokemon-species/{name.Value}"))
+            // not found case handled separately because it is considered the most frequent "unsuccessfull case" and avoidi exception overhead could be a great benefit for performance
+            if (HttpStatusCode.NotFound.Equals(response.StatusCode))
             {
-                // not found case handled separately because it is considered the most frequent "unsuccessfull case" and avoidi exception overhead could be a great benefit for performance
-                if (HttpStatusCode.NotFound.Equals(response.StatusCode))
-                {
-                    return Result.Fail(DomainErrors.UnknownPokemon);
-                }
-                
-                response.EnsureSuccessStatusCode();
-                var pokemonData = await response.Content.ReadFromJsonAsync<PokeApiPokemonData>();
-                var resolveDescription = pokemonData.FlavorTextEntries?.FirstOrDefault(x => PokeApiFlavorTextEntryLanguage.EnglishName.Equals(x.Language?.Name, StringComparison.InvariantCultureIgnoreCase)).FlavorText ?? string.Empty;
-                return Result.Ok(new PokemonStandardInfoModel(pokemonData.Name, Description: resolveDescription, pokemonData.Habitat.HasValue ? PokemonHabitat.From(pokemonData.Habitat!.Value!.Name!) : null, isLegendary: pokemonData.IsLegendary));
+                _logger.LogDebug("No Pokemon found with name {name}", name.Value);
+                return default;
             }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed reading data from PokeApi");
-            return Result.Fail(DomainErrors.CannotReadPokemonData);
+
+            _logger.LogDebug("Successfully retrieved Pokemon data from api");
+
+            response.EnsureSuccessStatusCode();
+            var pokemonData = await response.Content.ReadFromJsonAsync<PokeApiPokemonData>();
+            var resolveDescription = pokemonData.FlavorTextEntries?.FirstOrDefault(x => PokeApiFlavorTextEntryLanguage.EnglishName.Equals(x.Language?.Name, StringComparison.InvariantCultureIgnoreCase)).FlavorText ?? string.Empty;
+            return new PokemonStandardInfoModel(pokemonData.Name, Description: resolveDescription, pokemonData.Habitat.HasValue ? PokemonHabitat.From(pokemonData.Habitat!.Value!.Name!) : null, IsLegendary: pokemonData.IsLegendary);
         }
     }
 
