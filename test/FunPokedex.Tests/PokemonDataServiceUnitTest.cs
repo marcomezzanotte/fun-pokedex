@@ -45,7 +45,7 @@ public class PokemonDataServiceUnitTest
         // Arrange
         _mockPokemonReader.Setup(x => x.GetPokemonByNameOrDefaultAsync(It.IsAny<PokemonName>())).ThrowsAsync(new Exception("sample-pokeapi-exception"));
 
-       // Act
+        // Act
         var methodResult = await _sut.GetPokemonStandardInfoAsIsAsync("any-pokemon");
 
         // Assert
@@ -61,7 +61,7 @@ public class PokemonDataServiceUnitTest
         var samplePokemonData = new AutoBogus.AutoFaker<PokemonStandardInfoModel>().Generate();
         _mockPokemonReader.Setup(x => x.GetPokemonByNameOrDefaultAsync(It.IsAny<PokemonName>())).ReturnsAsync(samplePokemonData);
 
-       // Act
+        // Act
         var methodResult = await _sut.GetPokemonStandardInfoAsIsAsync("any-pokemon");
 
         // Assert
@@ -79,7 +79,7 @@ public class PokemonDataServiceUnitTest
         // Arrange
         _mockPokemonReader.Setup(x => x.GetPokemonByNameOrDefaultAsync(It.IsAny<PokemonName>())).ReturnsAsync(null as PokemonStandardInfoModel);
 
-       // Act
+        // Act
         var methodResult = await _sut.GetPokemonStandardInfoTransaltedAsync("unknonw-pokemon");
 
         // Assert
@@ -94,7 +94,7 @@ public class PokemonDataServiceUnitTest
         // Arrange
         _mockPokemonReader.Setup(x => x.GetPokemonByNameOrDefaultAsync(It.IsAny<PokemonName>())).ThrowsAsync(new Exception("sample-pokeapi-exception"));
 
-       // Act
+        // Act
         var methodResult = await _sut.GetPokemonStandardInfoTransaltedAsync("any-pokemon");
 
         // Assert
@@ -114,7 +114,7 @@ public class PokemonDataServiceUnitTest
         _mockPokemonReader.Setup(x => x.GetPokemonByNameOrDefaultAsync(It.IsAny<PokemonName>())).ReturnsAsync(samplePokemonData);
         _mockTextTranslator.Setup(x => x.ApplyYodaTranslationAsync(It.IsAny<string>())).ReturnsAsync(samplePokemonDataWithTranslatedDescription.Description);
 
-       // Act
+        // Act
         var methodResult = await _sut.GetPokemonStandardInfoTransaltedAsync("any-pokemon");
 
         // Assert
@@ -133,7 +133,7 @@ public class PokemonDataServiceUnitTest
         _mockPokemonReader.Setup(x => x.GetPokemonByNameOrDefaultAsync(It.IsAny<PokemonName>())).ReturnsAsync(samplePokemonData);
         _mockTextTranslator.Setup(x => x.ApplyYodaTranslationAsync(It.IsAny<string>())).ReturnsAsync(samplePokemonDataWithTranslatedDescription.Description);
 
-       // Act
+        // Act
         var methodResult = await _sut.GetPokemonStandardInfoTransaltedAsync("any-pokemon");
 
         // Assert
@@ -153,7 +153,7 @@ public class PokemonDataServiceUnitTest
         _mockPokemonReader.Setup(x => x.GetPokemonByNameOrDefaultAsync(It.IsAny<PokemonName>())).ReturnsAsync(samplePokemonData);
         _mockTextTranslator.Setup(x => x.ApplyYodaTranslationAsync(It.IsAny<string>())).ReturnsAsync(samplePokemonDataWithTranslatedDescription.Description);
 
-       // Act
+        // Act
         var methodResult = await _sut.GetPokemonStandardInfoTransaltedAsync("any-pokemon");
 
         // Assert
@@ -173,7 +173,7 @@ public class PokemonDataServiceUnitTest
         _mockPokemonReader.Setup(x => x.GetPokemonByNameOrDefaultAsync(It.IsAny<PokemonName>())).ReturnsAsync(samplePokemonData);
         _mockTextTranslator.Setup(x => x.ApplyShakespereanTranslationAsync(It.IsAny<string>())).ReturnsAsync(samplePokemonDataWithTranslatedDescription.Description);
 
-       // Act
+        // Act
         var methodResult = await _sut.GetPokemonStandardInfoTransaltedAsync("any-pokemon");
 
         // Assert
@@ -182,7 +182,7 @@ public class PokemonDataServiceUnitTest
     }
 
     [TestMethod]
-    public async Task GetPokemonStandardInfoTransaltedAsync_When_FunTranslationsThrows_Returns_CorrespondentPokemonModel()
+    public async Task GetPokemonStandardInfoTransaltedAsync_When_FunTranslationsThrows_Returns_CorrespondentPokemonModelWithOriginalDescription()
     {
         // Arrange
         var samplePokemonData = new AutoBogus.AutoFaker<PokemonStandardInfoModel>()
@@ -192,13 +192,12 @@ public class PokemonDataServiceUnitTest
         _mockPokemonReader.Setup(x => x.GetPokemonByNameOrDefaultAsync(It.IsAny<PokemonName>())).ReturnsAsync(samplePokemonData);
         _mockTextTranslator.Setup(x => x.ApplyYodaTranslationAsync(It.IsAny<string>())).ThrowsAsync(new Exception("sample-pokeapi-exception"));
 
-       // Act
+        // Act
         var methodResult = await _sut.GetPokemonStandardInfoTransaltedAsync("any-pokemon");
 
         // Assert
-        methodResult.IsFailed.Should().BeTrue();
-        methodResult.HasError<DomainError>().Should().BeTrue();
-        methodResult.Errors.Single().Should().BeEquivalentTo(DomainErrors.CannotTranslatePokemonData);
+        methodResult.IsSuccess.Should().BeTrue();
+        methodResult.Value.Should().BeEquivalentTo(samplePokemonData);
     }
 
     #endregion
@@ -208,5 +207,4 @@ public class PokemonDataServiceUnitTest
         var translatedDescription = $"{samplePokemonData.Description}-translated";
         return new PokemonStandardInfoModel(Name: samplePokemonData.Name, Description: translatedDescription, Habitat: samplePokemonData.Habitat, IsLegendary: samplePokemonData.IsLegendary);
     }
-
 }

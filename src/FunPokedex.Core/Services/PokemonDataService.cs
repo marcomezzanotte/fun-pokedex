@@ -49,10 +49,10 @@ public sealed class PokemonDataService : IPokemonDataService
             _logger.LogInformation("Successfully read Pokemon data. Translating description");
 
             // on successfull lookup, proceed with translation
+            var pokemonDataAsIs = lookupResult.Value;
+            string translatedDescription = pokemonDataAsIs.Description;
             try
             {
-                var pokemonDataAsIs = lookupResult.Value;
-                string translatedDescription;
                 if (pokemonDataAsIs.ShouldApplyYodaTranslation())
                 {
                     _logger.LogDebug("Apply Yoda translation");
@@ -65,14 +65,13 @@ public sealed class PokemonDataService : IPokemonDataService
                 }
 
                 _logger.LogInformation("Successfully translated Pokemon data");
-
-                return Result.Ok(new PokemonStandardInfoModel(pokemonDataAsIs.Name, translatedDescription, pokemonDataAsIs.Habitat, pokemonDataAsIs.IsLegendary));
             }
             catch (Exception ex)
             {
                 _logger.LogWarning(ex, "Failed transalting data through FunTranslations");
-                return Result.Fail(DomainErrors.CannotTranslatePokemonData);
             }
+
+            return Result.Ok(new PokemonStandardInfoModel(pokemonDataAsIs.Name, translatedDescription, pokemonDataAsIs.Habitat, pokemonDataAsIs.IsLegendary));
         }
     }
 }

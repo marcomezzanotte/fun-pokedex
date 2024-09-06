@@ -24,6 +24,8 @@ public class FunTranslationTextTranslatorUnitTest
         _sut = new FunTranslationTextTranslator(new NullLogger<FunTranslationTextTranslator>(), httpClient);
     }
 
+    #region [ YodaTranslation ]
+
     [TestMethod]
     public async Task ApplyYodaTranslationAsync_When_APIReturnsTranslation_Returns_ProperTranslation()
     {
@@ -54,7 +56,6 @@ public class FunTranslationTextTranslatorUnitTest
         await _sut.Invoking(y => y.ApplyYodaTranslationAsync(testString))
                   .Should()
                   .ThrowAsync<ApplicationException>();
-
     }
 
     [TestMethod]
@@ -70,4 +71,56 @@ public class FunTranslationTextTranslatorUnitTest
                   .ThrowAsync<HttpRequestException>();
 
     }
+
+    #endregion
+
+    #region [ ShakespereanTranslation ]
+
+    [TestMethod]
+    public async Task ApplyShakespereanTranslationAsync_When_APIReturnsTranslation_Returns_ProperTranslation()
+    {
+        const string SuccessfullyTranslatedText = "Sample to beest did translate";
+        const string SuccessfullJsonStringContentSample = "{\"success\":{\"total\":1},\"contents\":{\"translated\":\"" + SuccessfullyTranslatedText + "\",\"text\":\"sample to be translated\",\"translation\":\"shakespeare\"}}";
+
+        // Arrange
+        var testString = "teststring";
+        _mockHttpClientHandler.SetupRequest(HttpMethod.Get, string.Format(ApiTranslateUri, FunTranslationTextTranslator.ShakespereanTranslatorPath, testString)).ReturnsJsonResponse(JsonObject.Parse(SuccessfullJsonStringContentSample));
+
+        // Act
+        var methodResult = await _sut.ApplyShakespereanTranslationAsync(testString);
+
+        // Assert
+        methodResult.Should().Be(SuccessfullyTranslatedText);
+    }
+
+    [TestMethod]
+    public async Task ApplyShakespereanTranslationAsync_When_APIReturnsSuccessCountNotEqualToOne_ThrowsApplicationException()
+    {
+        const string UnsuccessfullJsonStringContentSample = "{\"success\":{\"total\":0},\"contents\":{\"translated\":\"\",\"text\":\"sample to be translated\",\"translation\":\"shakespeare\"}}";
+
+        // Arrange
+        var testString = "teststring";
+        _mockHttpClientHandler.SetupRequest(HttpMethod.Get, string.Format(ApiTranslateUri, FunTranslationTextTranslator.ShakespereanTranslatorPath, testString)).ReturnsJsonResponse(JsonObject.Parse(UnsuccessfullJsonStringContentSample));
+
+        // Act
+        await _sut.Invoking(y => y.ApplyShakespereanTranslationAsync(testString))
+                  .Should()
+                  .ThrowAsync<ApplicationException>();
+    }
+
+    [TestMethod]
+    public async Task ApplyShakespereanTranslationAsync_When_APIReturnsUnsucessfullStatusCode_ThrowsApplicationException()
+    {
+        // Arrange
+        var testString = "teststring";
+        _mockHttpClientHandler.SetupRequest(HttpMethod.Get, string.Format(ApiTranslateUri, FunTranslationTextTranslator.ShakespereanTranslatorPath, testString)).ReturnsResponse(System.Net.HttpStatusCode.InternalServerError);
+
+        // Act
+        await _sut.Invoking(y => y.ApplyShakespereanTranslationAsync(testString))
+                  .Should()
+                  .ThrowAsync<HttpRequestException>();
+    }
+
+    #endregion
+
 }
