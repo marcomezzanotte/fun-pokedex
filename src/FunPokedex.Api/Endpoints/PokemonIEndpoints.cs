@@ -1,5 +1,7 @@
 ﻿using FluentResults;
+using FunPokedex.Core.Errors;
 using FunPokedex.Core.Interfaces;
+using FunPokedex.Core.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -21,6 +23,10 @@ public static class PokemonEndpoints
                 _ => serviceResult.MapToApiResultsOnFailed()
             };
         })
+        .WithDescription("Returns standard Pokemon data having requested name")
+        .Produces<PokemonStandardInfoModel>()
+        .ProducesProblem(DomainErrors.UnknownPokemon.MapStatusCode())
+        .ProducesProblem(DomainErrors.CannotReadPokemonData.MapStatusCode())
         .WithOpenApi();
 
         groupBuilder.MapGet("/translated/{pokemonName}", async (IPokemonDataService pokemonDataService, string pokemonName) =>
@@ -32,6 +38,10 @@ public static class PokemonEndpoints
                 _ => serviceResult.MapToApiResultsOnFailed()
             };
         })
+        .WithDescription("Returns standard Pokemon data having requested name with attempting to translate the description with a funny one")
+        .Produces<PokemonStandardInfoModel>()
+        .ProducesProblem(DomainErrors.UnknownPokemon.MapStatusCode())
+        .ProducesProblem(DomainErrors.CannotReadPokemonData.MapStatusCode())
         .WithOpenApi();
 
     }

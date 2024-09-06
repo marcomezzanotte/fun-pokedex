@@ -10,7 +10,7 @@ public static class AspNetCoreDomainErrorExtensions
         return Results.Problem(statusCode: statusCode, title: targetError.Message, type: targetError.Code.Value, extensions: targetError.Metadata);
     }
 
-    private static int MapStatusCode(DomainError targetError)
+    public static int MapStatusCode(this DomainError targetError)
     {
         return targetError.Status switch
         {

@@ -1,8 +1,10 @@
 using FunPokedex.Api.Endpoints;
 using FunPokedex.Core.Extensions;
+using FunPokedex.Core.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +21,11 @@ builder.Services.AddFunTranslationsTextTranslator(baseUri: new System.Uri("https
 
 // avoid Swagger in production environments (keep application as slim as possible)
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(opt =>
+{
+    opt.MapType<PokemonName>(() => new Microsoft.OpenApi.Models.OpenApiSchema { Type = "string" });
+    opt.MapType<PokemonHabitat>(() => new Microsoft.OpenApi.Models.OpenApiSchema { Type = "string" });
+});
 
 var app = builder.Build();
 
