@@ -38,6 +38,11 @@ To run test the dotnet CLI can be used running the following command:
 dotnet test .\test\FunPokedex.Tests\FunPokedex.Tests.csproj
 ```
 
+### Libraries
+The project uses the following *non-standard* libraries for common AspNetCore projects:
+- `FluentResult`: a library providing utility classes and methods to implement the *Result pattern* instead of throwing exceptions. This pattern allows to get better performance minimizing exception throwing overhead of the .NET framework and making more explicit the chance that something can go wrong
+- `Vogen`: a library providing source-generated custom typed primitives, preventing the well-known *Primitive obsession* anti-pattern
+- `Microsoft.Extensions.Http.Resilience`: used to implement standard resilience features to `HttpClient`
 
 ## Build and run
 ### `dotnet` CLI command
